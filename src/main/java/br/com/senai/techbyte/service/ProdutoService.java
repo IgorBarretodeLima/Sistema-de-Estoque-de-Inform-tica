@@ -18,7 +18,7 @@ public class ProdutoService {
     }
 
     public Produto cadastrarProduto(String nome, String descricao, BigDecimal preco) {
-        validarDadosProduto(nome, preco);
+        validarDadosProduto(nome, preco, descricao);
 
         // Regra de Negócio: Adiciona tag em produtos com valor elevado
         if (preco.compareTo(new BigDecimal("5000.00")) >= 0 && !descricao.contains("[VALOR ALTO]")) {
@@ -45,7 +45,7 @@ public class ProdutoService {
             throw new IllegalArgumentException("ID inválido para atualização.");
         }
 
-        validarDadosProduto(nome, preco);
+        validarDadosProduto(nome, preco, descricao);
 
         Optional<Produto> existente = repository.buscarPorId(id);
         if (existente.isEmpty()) {
@@ -69,12 +69,15 @@ public class ProdutoService {
     }
 
     // Metodo privado centralizando validações de regras de negócio
-    private void validarDadosProduto(String nome, BigDecimal preco) {
+    private void validarDadosProduto(String nome, BigDecimal preco, String descricao) {
         if (nome == null || nome.isBlank()) {
-            throw new IllegalArgumentException("O nome do produto é obrigatório.");
+            throw new IllegalArgumentException("O nome do produto é invalido.");
         }
         if (nome.trim().length() < 3) {
-            throw new IllegalArgumentException("O nome do produto deve ter no mínimo 3 caracteres.");
+            throw new IllegalArgumentException("O nome do produto deve ter conter no mínimo 3 caracteres.");
+        }
+        if(descricao == null || descricao.isBlank()){
+            throw new IllegalArgumentException("A descrição é obrigatoria.");
         }
         if (preco == null || preco.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("O preço do produto não pode ser negativo.");
